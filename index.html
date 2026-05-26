@@ -6,102 +6,196 @@
 <title>LPS P8 Sarjaseuranta 2026</title>
 <style>
   :root {
-    --lps-blue: #1F4E79; --lps-light: #BDD7EE; --lps-yellow: #FFF9C4;
-    --win: #C6EFCE; --loss: #FFCCCC; --draw: #FFEB9C;
-    --bg: #F4F7FB; --card: #fff; --text: #1a1a2e;
-    --radius: 12px; --shadow: 0 2px 12px rgba(31,78,121,.10);
+    --green: #00843D; --green-dark: #006830; --green-light: #e8f5ee;
+    --black: #121212; --white: #fff; --gray: #f5f5f5; --gray2: #e8e8e8;
+    --win: #c8f0d8; --loss: #ffd5d5; --draw: #fff3cc;
+    --shadow: 0 2px 16px rgba(0,132,61,.13);
+    --radius: 12px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg);
-         color: var(--text); font-size: 15px; }
-  header { background: var(--lps-blue); color: #fff; padding: 18px 20px 14px;
-           text-align: center; }
-  header h1 { font-size: 1.5rem; letter-spacing: .5px; }
-  header p  { font-size: .85rem; opacity: .75; margin-top: 4px; }
-  .container { max-width: 900px; margin: 0 auto; padding: 16px 12px 40px; }
-  .card { background: var(--card); border-radius: var(--radius);
-          box-shadow: var(--shadow); margin-bottom: 18px; overflow: hidden; }
-  .card-title { background: var(--lps-blue); color: #fff; padding: 10px 16px;
-                font-weight: 700; font-size: 1rem; display: flex;
-                align-items: center; gap: 8px; }
-  .card-title .badge { background: rgba(255,255,255,.2); border-radius: 20px;
-                       padding: 2px 10px; font-size: .8rem; font-weight: 400; }
-  table { width: 100%; border-collapse: collapse; }
-  th { background: #EBF3FB; color: var(--lps-blue); font-weight: 700;
-       padding: 7px 10px; text-align: center; font-size: .82rem; border-bottom: 2px solid var(--lps-light); }
-  th.left { text-align: left; }
-  td { padding: 6px 10px; border-bottom: 1px solid #F0F4F8; font-size: .88rem;
-       text-align: center; }
-  td.left { text-align: left; }
-  tr.lps { background: var(--lps-yellow) !important; font-weight: 700; }
-  tr.lps td { color: var(--lps-blue); }
-  tr:last-child td { border-bottom: none; }
-  tr:hover:not(.lps) { background: #F8FBFF; }
-  .win  { background: var(--win); }
-  .loss { background: var(--loss); }
-  .draw { background: var(--draw); }
-  .upcoming { background: #EBF3FB; }
-  .tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 16px 0; }
-  .tab { padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: .85rem;
-         background: #E8F0F8; border: 2px solid transparent; font-weight: 600;
-         transition: all .15s; }
-  .tab.active { background: var(--lps-blue); color: #fff; }
-  .tab:hover:not(.active) { border-color: var(--lps-blue); color: var(--lps-blue); }
-  .tab-content { display: none; padding: 4px 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f2;
+         color: var(--black); font-size: 15px; }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--black);
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,.3);
+  }
+  .header-top {
+    background: var(--green);
+    height: 6px;
+  }
+  .header-content {
+    display: flex; align-items: center; gap: 16px;
+    padding: 14px 24px;
+  }
+  .header-logo {
+    height: 56px; width: auto;
+    filter: brightness(0) invert(1);
+  }
+  .header-text h1 {
+    color: var(--white); font-size: 1.4rem; font-weight: 800;
+    letter-spacing: .3px; line-height: 1.2;
+  }
+  .header-text p {
+    color: #aaa; font-size: .82rem; margin-top: 2px;
+  }
+  .header-badge {
+    margin-left: auto;
+    background: var(--green); color: #fff;
+    border-radius: 20px; padding: 4px 14px;
+    font-size: .8rem; font-weight: 700; white-space: nowrap;
+  }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 20px 12px 48px; }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 16px;
+  }
+  .tab {
+    padding: 8px 18px; border-radius: 24px; cursor: pointer;
+    font-size: .88rem; font-weight: 700; border: 2px solid var(--gray2);
+    background: var(--white); color: #555; transition: all .15s;
+  }
+  .tab.active { background: var(--green); color: #fff; border-color: var(--green); }
+  .tab:hover:not(.active) { border-color: var(--green); color: var(--green); }
+  .tab-content { display: none; }
   .tab-content.active { display: block; }
-  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(190px,1fr));
-                  gap: 12px; padding: 14px; }
-  .summary-tile { background: var(--lps-yellow); border-radius: 10px; padding: 14px 16px;
-                  border-left: 5px solid var(--lps-blue); }
-  .summary-tile .team { font-weight: 700; font-size: 1rem; color: var(--lps-blue); }
-  .summary-tile .pos  { font-size: 2rem; font-weight: 800; color: var(--lps-blue);
-                         line-height: 1; margin: 4px 0; }
-  .summary-tile .sub  { font-size: .8rem; color: #555; }
-  .loader { text-align: center; padding: 40px; color: #888; font-size: 1rem; }
-  .ts { font-size: .75rem; color: #aaa; text-align: center; padding: 8px; }
-  .badge-win { background: #28a745; color: #fff; border-radius: 4px;
-               padding: 1px 6px; font-size: .78rem; }
-  .badge-loss { background: #dc3545; color: #fff; border-radius: 4px;
-                padding: 1px 6px; font-size: .78rem; }
-  .badge-draw { background: #fd7e14; color: #fff; border-radius: 4px;
-                padding: 1px 6px; font-size: .78rem; }
-  .error { background: #ffe0e0; color: #c00; padding: 14px; border-radius: 8px;
-           margin: 12px; font-size: .9rem; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white); border-radius: var(--radius);
+    box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden;
+  }
+  .card-header {
+    background: var(--green); color: var(--white);
+    padding: 11px 18px; font-weight: 700; font-size: .95rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-header .sub {
+    margin-left: auto; font-size: .78rem; font-weight: 400;
+    background: rgba(255,255,255,.2); border-radius: 12px; padding: 2px 10px;
+  }
+
+  /* ── SUMMARY TILES ── */
+  .summary-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 14px; padding: 16px;
+  }
+  .tile {
+    border-radius: 10px; padding: 16px 18px;
+    border-left: 5px solid var(--green);
+    background: linear-gradient(135deg, var(--green-light) 0%, #fff 100%);
+    box-shadow: 0 1px 6px rgba(0,132,61,.1);
+  }
+  .tile-name { font-weight: 800; color: var(--green-dark); font-size: .95rem; }
+  .tile-pos  { font-size: 2.4rem; font-weight: 900; color: var(--green);
+               line-height: 1; margin: 4px 0 2px; }
+  .tile-pos span { font-size: 1rem; font-weight: 400; color: #666; }
+  .tile-sub  { font-size: .78rem; color: #555; margin-top: 2px; }
+  .tile-record { font-weight: 700; color: var(--green-dark); margin-top: 3px; font-size: .85rem; }
+
+  /* ── TABLES ── */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    background: #f0f8f4; color: var(--green-dark); font-weight: 700;
+    padding: 8px 10px; text-align: center; font-size: .82rem;
+    border-bottom: 2px solid var(--green);
+  }
+  th.l { text-align: left; }
+  td {
+    padding: 7px 10px; border-bottom: 1px solid #eef5f1;
+    font-size: .88rem; text-align: center;
+  }
+  td.l { text-align: left; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover:not(.lps-row) { background: #f8fbf9; }
+
+  /* LPS highlight */
+  tr.lps-row { background: #fff9e0 !important; }
+  tr.lps-row td { color: var(--green-dark); font-weight: 700; }
+  tr.lps-row td.l::after { content: ' ⬅'; font-size: .75rem; color: var(--green); }
+
+  /* Result colours */
+  tr.win  { background: var(--win); }
+  tr.loss { background: var(--loss); }
+  tr.draw { background: var(--draw); }
+  tr.upcoming-row { background: #f0f8f4; }
+
+  /* Badges */
+  .bv { background: var(--green); color: #fff; border-radius: 4px;
+        padding: 1px 7px; font-size: .78rem; font-weight: 700; }
+  .bh { background: #e53e3e; color: #fff; border-radius: 4px;
+        padding: 1px 7px; font-size: .78rem; font-weight: 700; }
+  .bt { background: #d69e2e; color: #fff; border-radius: 4px;
+        padding: 1px 7px; font-size: .78rem; font-weight: 700; }
+
+  /* Error */
+  .error { background: #ffe0e0; color: #c00; padding: 16px; border-radius: 10px;
+           margin: 12px; }
+  .loader { text-align: center; padding: 50px; color: #888; font-size: 1rem; }
+
+  /* Footer */
+  footer { text-align: center; padding: 16px; color: #999; font-size: .78rem; }
+  footer a { color: var(--green); text-decoration: none; }
+
   @media (max-width: 600px) {
+    .header-content { padding: 10px 14px; }
+    .header-logo { height: 42px; }
+    .header-text h1 { font-size: 1.1rem; }
+    .header-badge { display: none; }
     table { font-size: .8rem; }
     td, th { padding: 5px 6px; }
-    .summary-tile .pos { font-size: 1.6rem; }
+    .tile-pos { font-size: 1.8rem; }
   }
 </style>
 </head>
 <body>
+
 <header>
-  <h1>⚽ LPS P8 Sarjaseuranta</h1>
-  <p id="update-ts">Ladataan dataa…</p>
+  <div class="header-top"></div>
+  <div class="header-content">
+    <img class="header-logo"
+         src="https://laajasalonpalloseura.fi/wp-content/uploads/2021/11/LPS-LOGO-ILMAN-TAUSTAA.png"
+         alt="LPS logo">
+    <div class="header-text">
+      <h1>P8 Sarjaseuranta</h1>
+      <p id="update-ts">Ladataan dataa…</p>
+    </div>
+    <div class="header-badge">Kevät 2026</div>
+  </div>
 </header>
 
 <div class="container">
   <div id="app"><div class="loader">⏳ Haetaan sarjadataa Palloliiton API:sta…</div></div>
 </div>
 
+<footer>
+  Data: <a href="https://tulospalvelu.palloliitto.fi" target="_blank">Palloliitto Tulospalvelu</a>
+  · Päivittyy automaattisesti joka latauksella ·
+  <a href="https://laajasalonpalloseura.fi" target="_blank">laajasalonpalloseura.fi</a>
+</footer>
+
 <script>
-const BASE = 'https://palloliitto.torneopal.fi/taso/rest';
+const BASE   = 'https://palloliitto.torneopal.fi/taso/rest';
 const ACCEPT = 'json/df8e84j9xtdz269euy3h';
-const PARAM = 'ysnyp4h6e9egetkc3s3v';
-const COMP = 'etejp26';
+const PARAM  = 'ysnyp4h6e9egetkc3s3v';
+const COMP   = 'etejp26';
 
-const LPS_TEAMS = {
-  '35156867': { name: 'LPS',           level: 1, group: '1' },
-  '35167112': { name: 'LPS/Musta',     level: 2, group: '2' },
-  '35167113': { name: 'LPS/Vihreä',    level: 3, group: '4' },
-  '35213159': { name: 'LPS/Valkoinen', level: 5, group: '7' },
+const LPS_BY_GROUP = {
+  '1': { id:'35156867', name:'LPS',           level:1 },
+  '2': { id:'35167112', name:'LPS/Musta',     level:2 },
+  '4': { id:'35167113', name:'LPS/Vihreä',    level:3 },
+  '7': { id:'35213159', name:'LPS/Valkoinen', level:5 },
 };
-const LPS_BY_GROUP = Object.fromEntries(
-  Object.entries(LPS_TEAMS).map(([id,v])=>[v.group, {id,...v}]));
 
-async function api(endpoint, params) {
-  const url = `${BASE}/${endpoint}?${new URLSearchParams(params)}&${PARAM}`;
-  const r = await fetch(url, { headers: { Accept: ACCEPT } });
+async function api(ep, params) {
+  const r = await fetch(`${BASE}/${ep}?${new URLSearchParams(params)}&${PARAM}`,
+                        { headers:{ Accept:ACCEPT } });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
@@ -109,92 +203,62 @@ async function api(endpoint, params) {
 function calcStandings(matches) {
   const t = {};
   for (const m of matches) {
-    if (m.status !== 'Played' || m.competition_id !== COMP) continue;
-    const gA = parseInt(m.fs_A), gB = parseInt(m.fs_B);
-    if (isNaN(gA) || isNaN(gB)) continue;
-    const ensure = (id, name) => {
-      if (!t[id]) t[id] = { id, name, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 };
-    };
-    ensure(m.team_A_id, m.team_A_name);
-    ensure(m.team_B_id, m.team_B_name);
+    if (m.status!=='Played'||m.competition_id!==COMP) continue;
+    const gA=+m.fs_A, gB=+m.fs_B;
+    if (isNaN(gA)||isNaN(gB)) continue;
+    const add=(id,name)=>{ if(!t[id]) t[id]={id,name,p:0,w:0,d:0,l:0,gf:0,ga:0,pts:0}; };
+    add(m.team_A_id,m.team_A_name); add(m.team_B_id,m.team_B_name);
     t[m.team_A_id].p++; t[m.team_A_id].gf+=gA; t[m.team_A_id].ga+=gB;
     t[m.team_B_id].p++; t[m.team_B_id].gf+=gB; t[m.team_B_id].ga+=gA;
-    if (gA > gB) { t[m.team_A_id].w++; t[m.team_A_id].pts+=3; t[m.team_B_id].l++; }
-    else if (gB > gA) { t[m.team_B_id].w++; t[m.team_B_id].pts+=3; t[m.team_A_id].l++; }
-    else { t[m.team_A_id].d++; t[m.team_A_id].pts++; t[m.team_B_id].d++; t[m.team_B_id].pts++; }
+    if(gA>gB){t[m.team_A_id].w++;t[m.team_A_id].pts+=3;t[m.team_B_id].l++;}
+    else if(gB>gA){t[m.team_B_id].w++;t[m.team_B_id].pts+=3;t[m.team_A_id].l++;}
+    else{t[m.team_A_id].d++;t[m.team_A_id].pts++;t[m.team_B_id].d++;t[m.team_B_id].pts++;}
   }
   return Object.values(t)
-    .sort((a,b)=> b.pts-a.pts || (b.gf-b.ga)-(a.gf-a.ga) || b.gf-a.gf)
-    .map((x,i)=>({...x, pos:i+1, gd:x.gf-x.ga}));
+    .sort((a,b)=>b.pts-a.pts||(b.gf-b.ga)-(a.gf-a.ga)||b.gf-a.gf)
+    .map((x,i)=>({...x,pos:i+1,gd:x.gf-x.ga}));
 }
 
-function lpsMatches(matches, lpsId) {
+function lpsMat(matches, id) {
   return matches
-    .filter(m => m.competition_id===COMP && (m.team_A_id===lpsId||m.team_B_id===lpsId))
-    .map(m => {
-      const home = m.team_A_id === lpsId;
-      const opp = home ? m.team_B_name : m.team_A_name;
-      const oppId = home ? m.team_B_id : m.team_A_id;
-      let result = '-', outcome = '-';
-      if (m.status==='Played' && m.fs_A!=='') {
-        const gL = home ? +m.fs_A : +m.fs_B, gO = home ? +m.fs_B : +m.fs_A;
-        result = `${gL}–${gO}`;
-        outcome = gL>gO?'V':gL<gO?'H':'T';
+    .filter(m=>m.competition_id===COMP&&(m.team_A_id===id||m.team_B_id===id))
+    .map(m=>{
+      const h=m.team_A_id===id;
+      let res='-',out='-';
+      if(m.status==='Played'&&m.fs_A!==''){
+        const gL=h?+m.fs_A:+m.fs_B, gO=h?+m.fs_B:+m.fs_A;
+        res=`${gL}–${gO}`; out=gL>gO?'V':gL<gO?'H':'T';
       }
-      return { date:m.date, time:m.time?.slice(0,5)||'', home,
-               opp, oppId, result, outcome, status:m.status,
-               venue:m.venue_name||'' };
-    })
-    .sort((a,b)=>a.date.localeCompare(b.date));
+      return { date:m.date, time:(m.time||'').slice(0,5),
+               home:h, opp:h?m.team_B_name:m.team_A_name,
+               oppId:h?m.team_B_id:m.team_A_id,
+               res, out, status:m.status, venue:m.venue_name||'' };
+    }).sort((a,b)=>a.date.localeCompare(b.date));
 }
 
-function fmtDate(s) {
-  if (!s) return '';
-  const [y,m,d] = s.split('-');
-  return `${d}.${m}.${y}`;
-}
+const fd = s => s ? s.split('-').reverse().join('.') : '';
 
-function standingTable(standings, lpsId) {
-  const rows = standings.map(t => {
-    const isLps = t.id === lpsId;
-    return `<tr class="${isLps?'lps':''}">
-      <td>${t.pos}</td>
-      <td class="left">${t.name}${isLps?' ⬅':''}</td>
+function stTable(standings, lpsId) {
+  const rows = standings.map(t=>{
+    const L=t.id===lpsId;
+    return `<tr class="${L?'lps-row':''}">
+      <td>${t.pos}</td><td class="l">${t.name}</td>
       <td>${t.p}</td><td>${t.w}</td><td>${t.d}</td><td>${t.l}</td>
       <td>${t.gf}–${t.ga}</td><td>${t.gd>0?'+'+t.gd:t.gd}</td>
       <td><strong>${t.pts}</strong></td>
     </tr>`;
   }).join('');
-  return `<table>
-    <thead><tr>
-      <th>#</th><th class="left">Joukkue</th>
-      <th>P</th><th>V</th><th>T</th><th>H</th>
-      <th>Maalit</th><th>ME</th><th>Pts</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  return `<table><thead><tr>
+    <th>#</th><th class="l">Joukkue</th>
+    <th>P</th><th>V</th><th>T</th><th>H</th>
+    <th>Maalit</th><th>ME</th><th>Pts</th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function matchRows(matches, oppPositions) {
-  return matches.map(m => {
-    const future = m.status !== 'Played';
-    const cls = future ? 'upcoming' : m.outcome==='V'?'win':m.outcome==='H'?'loss':m.outcome==='T'?'draw':'';
-    const badge = future ? '' : m.outcome==='V'
-      ? `<span class="badge-win">V</span>`
-      : m.outcome==='H'
-      ? `<span class="badge-loss">H</span>`
-      : `<span class="badge-draw">T</span>`;
-    const oppPos = oppPositions[m.oppId];
-    const oppLabel = `${m.opp}${oppPos?` <small style="color:#888">(#${oppPos})</small>`:''}`;
-    return `<tr class="${cls}">
-      <td>${fmtDate(m.date)}</td>
-      <td>${m.time}</td>
-      <td>${m.home?'🏠 Koti':'✈ Vieras'}</td>
-      <td class="left">${oppLabel}</td>
-      <td>${m.result} ${badge}</td>
-      <td class="left" style="font-size:.78rem;color:#666">${m.venue}</td>
-    </tr>`;
-  }).join('');
+function matchBadge(out) {
+  return out==='V'?'<span class="bv">V</span>'
+        :out==='H'?'<span class="bh">H</span>'
+        :out==='T'?'<span class="bt">T</span>':'';
 }
 
 async function main() {
@@ -202,149 +266,139 @@ async function main() {
     const today = new Date().toISOString().slice(0,10);
     const groups = {};
 
-    await Promise.all(Object.entries(LPS_BY_GROUP).map(async ([gid, info]) => {
-      const d = await api('getGroup', {
-        competition_id: COMP, category_id: 'P8', group_id: gid, matches: 1
-      });
-      const grp = d.group;
-      const matches = grp.matches || [];
+    await Promise.all(Object.entries(LPS_BY_GROUP).map(async([gid,info])=>{
+      const d = await api('getGroup',{competition_id:COMP,category_id:'P8',group_id:gid,matches:1});
+      const matches = d.group.matches||[];
       const standings = calcStandings(matches);
-      const oppPos = Object.fromEntries(standings.map(t=>[t.id, t.pos]));
-      groups[gid] = { info, standings, matches, oppPos,
-                      groupName: grp.group_name };
+      groups[gid] = { info, standings, matches,
+                      oppPos:Object.fromEntries(standings.map(t=>[t.id,t.pos])),
+                      groupName:d.group.group_name };
     }));
 
-    // ── Summary tiles ──────────────────────────────────────────────────────
-    const summaryTiles = Object.entries(LPS_BY_GROUP)
+    // ── Tiles ──────────────────────────────────────────────────────────────
+    const tiles = Object.entries(LPS_BY_GROUP)
       .sort(([,a],[,b])=>a.level-b.level)
-      .map(([gid, info]) => {
-        const g = groups[gid];
-        const t = g.standings.find(x=>x.id===info.id);
+      .map(([gid,info])=>{
+        const g=groups[gid], t=g.standings.find(x=>x.id===info.id);
         if (!t) return '';
-        const total = g.standings.length;
-        return `<div class="summary-tile">
-          <div class="team">${info.name}</div>
-          <div class="pos">${t.pos}<span style="font-size:1rem;font-weight:400">/${total}</span></div>
-          <div class="sub">Taso ${info.level} · ${t.p} peliä · ${t.pts} pistettä</div>
-          <div class="sub">${t.w}V ${t.d}T ${t.l}H · ${t.gf}–${t.ga}</div>
+        return `<div class="tile">
+          <div class="tile-name">${info.name}</div>
+          <div class="tile-pos">${t.pos}<span>/${g.standings.length}</span></div>
+          <div class="tile-record">${t.w}V ${t.d}T ${t.l}H &nbsp;·&nbsp; ${t.gf}–${t.ga}</div>
+          <div class="tile-sub">Taso ${info.level} &nbsp;·&nbsp; ${t.pts} pistettä &nbsp;·&nbsp; ${t.p} peliä</div>
         </div>`;
       }).join('');
 
-    // ── Upcoming across all teams ──────────────────────────────────────────
-    const allUpcoming = [];
-    for (const [gid, info] of Object.entries(LPS_BY_GROUP)) {
-      const g = groups[gid];
-      const ms = lpsMatches(g.matches, info.id)
-        .filter(m => m.status !== 'Played' && m.date >= today);
-      ms.forEach(m => allUpcoming.push({...m, team:info.name, level:info.level,
-                                         oppPos: g.oppPos}));
+    // ── Upcoming ───────────────────────────────────────────────────────────
+    const allUp = [];
+    for (const [gid,info] of Object.entries(LPS_BY_GROUP)) {
+      const g=groups[gid];
+      lpsMat(g.matches,info.id)
+        .filter(m=>m.status!=='Played'&&m.date>=today)
+        .forEach(m=>allUp.push({...m,team:info.name,level:info.level,oppPos:g.oppPos}));
     }
-    allUpcoming.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
+    allUp.sort((a,b)=>a.date.localeCompare(b.date)||a.time.localeCompare(b.time));
 
-    const upcomingRows = allUpcoming.slice(0,20).map(m => {
-      const oppPos = m.oppPos[m.oppId];
-      return `<tr class="upcoming">
-        <td class="left"><strong>${m.team}</strong></td>
-        <td>${fmtDate(m.date)}</td><td>${m.time}</td>
-        <td>${m.home?'🏠':'✈'}</td>
-        <td class="left">${m.opp}${oppPos?` <small style="color:#888">(#${oppPos})</small>`:''}</td>
-        <td class="left" style="font-size:.78rem;color:#666">${m.venue}</td>
+    const upRows = allUp.slice(0,20).map(m=>{
+      const op=m.oppPos[m.oppId];
+      return `<tr class="upcoming-row">
+        <td class="l"><strong>${m.team}</strong></td>
+        <td>${fd(m.date)}</td><td>${m.time}</td>
+        <td>${m.home?'🏠 Koti':'✈ Vieras'}</td>
+        <td class="l">${m.opp}${op?` <small style="color:#888">(#${op})</small>`:''}</td>
+        <td class="l" style="font-size:.78rem;color:#777">${m.venue}</td>
       </tr>`;
     }).join('');
 
-    // ── Build HTML ─────────────────────────────────────────────────────────
-    const tabItems = ['Yhteenveto','Taso 1','Taso 2','Taso 3','Taso 5','Omat tulokset'];
-    const tabHeaders = tabItems.map((t,i)=>
-      `<div class="tab${i===0?' active':''}" onclick="switchTab(${i})">${t}</div>`).join('');
-
-    // Per-level standings + match list
-    const levelContents = Object.entries(LPS_BY_GROUP)
+    // ── Per-level tabs ─────────────────────────────────────────────────────
+    const levelTabs = Object.entries(LPS_BY_GROUP)
       .sort(([,a],[,b])=>a.level-b.level)
-      .map(([gid, info], idx) => {
-        const g = groups[gid];
-        const ms = lpsMatches(g.matches, info.id);
-        const oppPos = g.oppPos;
-        return `<div class="tab-content" id="tab-${idx+1}">
-          <div style="padding:0 0 4px">
-            ${standingTable(g.standings, info.id)}
+      .map(([gid,info],i)=>{
+        const g=groups[gid];
+        const ms=lpsMat(g.matches,info.id);
+        const mRows=ms.map(m=>{
+          const f=m.status!=='Played';
+          const cls=f?'upcoming-row':m.out==='V'?'win':m.out==='H'?'loss':m.out==='T'?'draw':'';
+          return `<tr class="${cls}">
+            <td>${fd(m.date)}</td><td>${m.time}</td>
+            <td>${m.home?'🏠':'✈'}</td>
+            <td class="l">${m.opp}</td>
+            <td>${m.res} ${matchBadge(m.out)}</td>
+            <td class="l" style="font-size:.77rem;color:#777">${m.venue}</td>
+          </tr>`;
+        }).join('');
+        return `<div class="tab-content" id="tab-${i+1}">
+          <div class="card">
+            <div class="card-header">📊 ${g.groupName} — Sarjataulukko
+              <span class="sub">${g.standings.length} joukkuetta</span>
+            </div>
+            ${stTable(g.standings, info.id)}
           </div>
-          <div class="card-title" style="margin-top:12px;border-radius:0">
-            📅 ${info.name} — Otteluohjelma & tulokset
-          </div>
-          <table>
-            <thead><tr>
+          <div class="card">
+            <div class="card-header">📅 ${info.name} — Otteluohjelma & tulokset</div>
+            <table><thead><tr>
               <th>Pvm</th><th>Klo</th><th>K/V</th>
-              <th class="left">Vastustaja</th><th>Tulos</th><th class="left">Paikka</th>
-            </tr></thead>
-            <tbody>${matchRows(ms, oppPos)}</tbody>
-          </table>
+              <th class="l">Vastustaja</th><th>Tulos</th><th class="l">Paikka</th>
+            </tr></thead><tbody>${mRows}</tbody></table>
+          </div>
         </div>`;
       }).join('');
 
-    // All results combined
-    const allPlayed = [];
-    for (const [gid, info] of Object.entries(LPS_BY_GROUP)) {
-      const g = groups[gid];
-      lpsMatches(g.matches, info.id)
+    // ── All results ────────────────────────────────────────────────────────
+    const allPlayed=[];
+    for(const[gid,info] of Object.entries(LPS_BY_GROUP)){
+      lpsMat(groups[gid].matches,info.id)
         .filter(m=>m.status==='Played')
-        .forEach(m=>allPlayed.push({...m,team:info.name,level:info.level,oppPos:g.oppPos}));
+        .forEach(m=>allPlayed.push({...m,team:info.name,level:info.level}));
     }
     allPlayed.sort((a,b)=>b.date.localeCompare(a.date));
+    const allRows=allPlayed.map(m=>`<tr class="${m.out==='V'?'win':m.out==='H'?'loss':'draw'}">
+      <td class="l"><strong>${m.team}</strong></td><td>Taso ${m.level}</td>
+      <td>${fd(m.date)}</td><td>${m.home?'🏠':'✈'}</td>
+      <td class="l">${m.opp}</td><td><strong>${m.res}</strong> ${matchBadge(m.out)}</td>
+    </tr>`).join('');
 
-    const allResultsRows = allPlayed.map(m => {
-      const cls = m.outcome==='V'?'win':m.outcome==='H'?'loss':'draw';
-      const badge = m.outcome==='V'?`<span class="badge-win">V</span>`
-                   :m.outcome==='H'?`<span class="badge-loss">H</span>`
-                   :`<span class="badge-draw">T</span>`;
-      return `<tr class="${cls}">
-        <td class="left"><strong>${m.team}</strong></td>
-        <td>Taso ${m.level}</td>
-        <td>${fmtDate(m.date)}</td>
-        <td>${m.home?'🏠':'✈'}</td>
-        <td class="left">${m.opp}</td>
-        <td><strong>${m.result}</strong> ${badge}</td>
-      </tr>`;
-    }).join('');
+    const now=new Date().toLocaleString('fi-FI');
+    document.getElementById('update-ts').textContent=`Päivitetty ${now}`;
 
-    const now = new Date().toLocaleString('fi-FI');
-    document.getElementById('update-ts').textContent = `Päivitetty: ${now}`;
+    const tabLabels=['Yhteenveto','Taso 1','Taso 2','Taso 3','Taso 5','Kaikki tulokset'];
+    const tabHtml=tabLabels.map((l,i)=>
+      `<div class="tab${i===0?' active':''}" onclick="sw(${i})">${l}</div>`).join('');
 
-    document.getElementById('app').innerHTML = `
-      <div class="card">
-        <div class="tabs">${tabHeaders}</div>
-        <div class="tab-content active" id="tab-0">
-          <div class="summary-grid">${summaryTiles}</div>
-          <div class="card-title" style="margin:12px 0 0;border-radius:0">
-            📅 Seuraavat pelit <span class="badge">${allUpcoming.length} kpl</span>
-          </div>
-          <table>
-            <thead><tr>
-              <th class="left">Joukkue</th><th>Pvm</th><th>Klo</th>
-              <th>K/V</th><th class="left">Vastustaja</th><th class="left">Paikka</th>
-            </tr></thead>
-            <tbody>${upcomingRows}</tbody>
-          </table>
+    document.getElementById('app').innerHTML=`
+      <div class="tabs">${tabHtml}</div>
+      <div class="tab-content active" id="tab-0">
+        <div class="card">
+          <div class="card-header">🏆 LPS-joukkueiden sijoitukset</div>
+          <div class="summary-grid">${tiles}</div>
         </div>
-        ${levelContents}
-        <div class="tab-content" id="tab-5">
-          <table>
-            <thead><tr>
-              <th class="left">Joukkue</th><th>Taso</th><th>Pvm</th>
-              <th>K/V</th><th class="left">Vastustaja</th><th>Tulos</th>
-            </tr></thead>
-            <tbody>${allResultsRows}</tbody>
-          </table>
+        <div class="card">
+          <div class="card-header">📅 Seuraavat pelit
+            <span class="sub">${allUp.length} tulossa</span>
+          </div>
+          <table><thead><tr>
+            <th class="l">Joukkue</th><th>Pvm</th><th>Klo</th>
+            <th>K/V</th><th class="l">Vastustaja</th><th class="l">Paikka</th>
+          </tr></thead><tbody>${upRows}</tbody></table>
         </div>
       </div>
-      <div class="ts">Data: Palloliitto Tulospalvelu · Päivittyy aina sivua ladattaessa</div>`;
+      ${levelTabs}
+      <div class="tab-content" id="tab-5">
+        <div class="card">
+          <div class="card-header">📋 Kaikki pelatut ottelut</div>
+          <table><thead><tr>
+            <th class="l">Joukkue</th><th>Taso</th><th>Pvm</th>
+            <th>K/V</th><th class="l">Vastustaja</th><th>Tulos</th>
+          </tr></thead><tbody>${allRows}</tbody></table>
+        </div>
+      </div>`;
   } catch(e) {
-    document.getElementById('app').innerHTML =
-      `<div class="error">⚠️ Datan lataus epäonnistui: ${e.message}<br>
-       <small>Tarkista nettiyhteys ja päivitä sivu.</small></div>`;
+    document.getElementById('app').innerHTML=
+      `<div class="error">⚠️ Virhe: ${e.message}<br><small>Päivitä sivu.</small></div>`;
   }
 }
 
-function switchTab(i) {
+function sw(i) {
   document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
   document.querySelectorAll('.tab-content').forEach((t,j)=>t.classList.toggle('active',i===j));
 }
