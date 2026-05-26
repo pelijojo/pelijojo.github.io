@@ -569,12 +569,9 @@
 
 <section class="hero">
   <div class="hero-inner">
-    <div class="hero-kicker">
-      <span class="bar"></span>
-      Kausiseuranta — 4 joukkuetta, 4 tasoa
-    </div>
+    <div class="hero-kicker">KAUSISEURANTA — 4 JOUKKUETTA: LPS, LPS/MUSTA, LPS/VIHREÄ JA LPS/VALKOINEN</div>
     <h1 class="hero-title">Piiri<span class="accent">sarja</span>.</h1>
-    <p class="hero-sub">LPS:n P8-joukkueiden sarjatilanne reaaliajassa. Sijoitukset, ottelut ja form-guide kaikille tasoille — päivittyy automaattisesti Palloliiton tulospalvelusta.</p>
+    <p class="hero-sub">LPS:n P8-joukkueiden sarjatilanne reaaliajassa. Sijoitukset ja ottelut kaikille tasoille — päivittyy automaattisesti Palloliiton tulospalvelusta.</p>
   </div>
 </section>
 
@@ -607,8 +604,6 @@
    TWEAKS
    ════════════════════════════════════════════════════════════════════ */
 const TWEAKS = /*EDITMODE-BEGIN*/{
-  "spotlightNext": true,
-  "spotlightSize": "large",
   "showForm": true,
   "subtleRows": true
 }/*EDITMODE-END*/;
@@ -948,11 +943,6 @@ function render() {
   if (!CACHE) return;
   const { groups, allUpcoming, allPlayed } = CACHE;
 
-  // Spotlight (first upcoming)
-  const spotlight = tweakState.spotlightNext && allUpcoming.length
-    ? renderSpotlight(allUpcoming[0])
-    : '';
-
   // Tiles (sorted by level)
   const tiles = Object.entries(LPS_BY_GROUP)
     .sort(([,a], [,b]) => a.level - b.level)
@@ -991,8 +981,7 @@ function render() {
 
   // App HTML
   document.getElementById('app').innerHTML = `
-    ${spotlight}
-    <div class="section-head">
+    <div class="section-head" style="margin-top:8px">
       <h2>Joukkueet</h2>
       <span class="small">Sijoitukset · Kausi 2026</span>
       <span class="section-rule"></span>
@@ -1068,19 +1057,7 @@ function renderTweaks() {
         <button id="tweaks-close" style="margin-left:auto; background:none; border:none; color:#aaa; cursor:pointer; font-size:18px; padding:0; line-height:1;">×</button>
       </div>
       <div style="padding: 18px 16px;">
-        <div style="margin-bottom: 18px;">
-          <div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 10px;">Seuraava ottelu</div>
-          <label style="display:flex; align-items:center; gap:10px; cursor:pointer; padding: 6px 0;">
-            <input type="checkbox" id="tw-spotlight" ${tweakState.spotlightNext ? 'checked' : ''}>
-            <span style="font-size:13px">Korosta heron alla</span>
-          </label>
-          <div style="display:flex; gap:6px; margin-top:10px; opacity:${tweakState.spotlightNext ? 1 : 0.4}; pointer-events:${tweakState.spotlightNext ? 'auto' : 'none'};">
-            <button data-size="large" class="tw-size-btn ${tweakState.spotlightSize==='large'?'active':''}" style="flex:1; padding:8px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:600; cursor:pointer; border:1px solid var(--rule); background:${tweakState.spotlightSize==='large'?'var(--ink)':'#fff'}; color:${tweakState.spotlightSize==='large'?'#fff':'var(--ink)'}; border-radius:3px; font-family:inherit;">Iso</button>
-            <button data-size="compact" class="tw-size-btn ${tweakState.spotlightSize==='compact'?'active':''}" style="flex:1; padding:8px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; font-weight:600; cursor:pointer; border:1px solid var(--rule); background:${tweakState.spotlightSize==='compact'?'var(--ink)':'#fff'}; color:${tweakState.spotlightSize==='compact'?'#fff':'var(--ink)'}; border-radius:3px; font-family:inherit;">Pieni</button>
-          </div>
-        </div>
-
-        <div style="margin-bottom: 6px; border-top: 1px solid var(--rule); padding-top: 16px;">
+        <div>
           <div style="font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 10px;">Joukkuekortit</div>
           <label style="display:flex; align-items:center; gap:10px; cursor:pointer; padding: 6px 0;">
             <input type="checkbox" id="tw-form" ${tweakState.showForm ? 'checked' : ''}>
@@ -1095,15 +1072,9 @@ function renderTweaks() {
     tweaksOpen = false; renderTweaks();
     window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
   };
-  document.getElementById('tw-spotlight').onchange = (e) => {
-    setTweak({ spotlightNext: e.target.checked });
-  };
   document.getElementById('tw-form').onchange = (e) => {
     setTweak({ showForm: e.target.checked });
   };
-  document.querySelectorAll('.tw-size-btn').forEach(b => {
-    b.onclick = () => setTweak({ spotlightSize: b.dataset.size });
-  });
 }
 
 function setTweak(patch) {
