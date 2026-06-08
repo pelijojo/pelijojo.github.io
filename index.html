@@ -794,6 +794,7 @@ const LPS_BY_GROUP = {
   '1': { id:'35156867', name:'LPS',           level:1 },
   '2': { id:'35167112', name:'LPS/Musta',     level:2 },
   '4': { id:'35167113', name:'LPS/Vihreä',    level:3 },
+  '6': { id:null,       name:null,            level:4 },
   '7': { id:'35213159', name:'LPS/Valkoinen', level:5 },
 };
 
@@ -1122,17 +1123,51 @@ function render() {
     g.lpsMatches.forEach(m => { m.oppPos = g.oppPos[m.oppId]; });
   }
 
-  // Tiles (sorted by level) — clickable, jump to that team's tab
-  const tiles = Object.entries(LPS_BY_GROUP)
-    .sort(([,a], [,b]) => a.level - b.level)
-    .map(([gid, info], i) => renderTile(info, groups[gid], groups[gid].lpsMatches, i + 1))
+  // Tiles (sorted by level) — only LPS teams, clickable, jump to that team's tab
+  const allLevelsSorted = Object.entries(LPS_BY_GROUP).sort(([,a], [,b]) => a.level - b.level);
+  const tiles = allLevelsSorted
+    .filter(([, info]) => info.id !== null)
+    .map(([gid, info]) => {
+      const tabIdx = allLevelsSorted.findIndex(([g]) => g === gid) + 1;
+      return renderTile(info, groups[gid], groups[gid].lpsMatches, tabIdx);
+    })
     .join('');
 
   // Per-level tab content
-  const levelTabs = Object.entries(LPS_BY_GROUP)
-    .sort(([,a], [,b]) => a.level - b.level)
+  const levelTabs = allLevelsSorted
     .map(([gid, info], i) => {
       const g = groups[gid];
+      if (info.id === null) {
+        // Level 4 — no LPS team, show full standings + all group matches
+        const allGroupMatches = (g.matches || [])
+          .filter(m => m.competition_id === COMP)
+          .map(m => {
+            let res = null, out = null;
+            if (m.status === 'Played' && m.fs_A !== '') res = `${m.fs_A}–${m.fs_B}`;
+            return { date: m.date, time: (m.time||'').slice(0,5),
+                     home: true, opp: `${m.team_A_name} – ${m.team_B_name}`,
+                     oppId: null, res, out, status: m.status, venue: m.venue_name||'' };
+          })
+          .sort((a,b) => a.date.localeCompare(b.date));
+        return `<div class="tab-content" id="tab-${i+1}">
+          <div class="panel">
+            <div class="panel-head">
+              <span class="accent-mark"></span>
+              <h3>Sarjataulukko · ${g.groupName || 'Taso 4'}</h3>
+              <span class="sub">${g.standings.length} joukkuetta · LPS:llä ei joukkuetta tällä tasolla</span>
+            </div>
+            ${renderStandings(g.standings, null)}
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <span class="accent-mark"></span>
+              <h3>Ottelut · ${g.groupName || 'Taso 4'}</h3>
+              <span class="sub">${allGroupMatches.length} ottelua</span>
+            </div>
+            ${renderMatchTable(allGroupMatches)}
+          </div>
+        </div>`;
+      }
       return `<div class="tab-content" id="tab-${i+1}">
         <div class="panel">
           <div class="panel-head">
@@ -1153,13 +1188,13 @@ function render() {
       </div>`;
     }).join('');
 
-  // Tabs — dropped the combined "Tulokset" tab; each level tab has its own results
-  const tabLabels = ['Yhteenveto', 'Taso 1', 'Taso 2', 'Taso 3', 'Taso 5'];
+  // Tabs
+  const tabLabels = ['Yhteenveto', 'Taso 1', 'Taso 2', 'Taso 3', 'Taso 4', 'Taso 5'];
   const tabHtml = tabLabels.map((l, i) =>
     `<button class="tab${i === 0 ? ' active' : ''}" data-tab="${i}">${l}</button>`).join('');
 
-  // Per-team sections for Yhteenveto — group by same-day rounds
-  const teamEntries = Object.entries(LPS_BY_GROUP).sort(([,a], [,b]) => a.level - b.level);
+  // Per-team sections for Yhteenveto — only LPS teams
+  const teamEntries = allLevelsSorted.filter(([, info]) => info.id !== null);
   const today = new Date().toISOString().slice(0,10);
 
   // Map level -> tab index (1..4 because Yhteenveto is 0)
