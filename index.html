@@ -1158,14 +1158,6 @@ function render() {
             </div>
             ${renderStandings(g.standings, null)}
           </div>
-          <div class="panel">
-            <div class="panel-head">
-              <span class="accent-mark"></span>
-              <h3>Ottelut · ${g.groupName || 'Taso 4'}</h3>
-              <span class="sub">${allGroupMatches.length} ottelua</span>
-            </div>
-            ${renderMatchTable(allGroupMatches)}
-          </div>
         </div>`;
       }
       return `<div class="tab-content" id="tab-${i+1}">
