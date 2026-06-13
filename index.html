@@ -811,9 +811,9 @@ async function api(ep, params) {
 function calcStandings(matches) {
   const t = {};
   for (const m of matches) {
-    if (m.status !== 'Played' || m.competition_id !== COMP) continue;
+    if (m.competition_id !== COMP) continue;
     const gA = +m.fs_A, gB = +m.fs_B;
-    if (isNaN(gA) || isNaN(gB)) continue;
+    if (isNaN(gA) || isNaN(gB) || m.fs_A === '' || m.fs_B === '') continue;
     const add = (id, name) => { if (!t[id]) t[id] = {id, name, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0}; };
     add(m.team_A_id, m.team_A_name); add(m.team_B_id, m.team_B_name);
     t[m.team_A_id].p++; t[m.team_A_id].gf += gA; t[m.team_A_id].ga += gB;
@@ -833,7 +833,7 @@ function lpsMatches(matches, id) {
     .map(m => {
       const home = m.team_A_id === id;
       let res = null, out = null;
-      if (m.status === 'Played' && m.fs_A !== '') {
+      if (m.fs_A !== '' && m.fs_B !== '') {
         const gL = home ? +m.fs_A : +m.fs_B;
         const gO = home ? +m.fs_B : +m.fs_A;
         res = `${gL}–${gO}`;
@@ -1037,7 +1037,7 @@ function renderMatchTable(rows, includeTeamCol = false, cards = false) {
     return `<div style="padding:24px 16px;color:var(--muted);text-align:center;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600">Ei otteluita</div>`;
   }
   const trs = rows.map(m => {
-    const isFuture = m.status !== 'Played';
+    const isFuture = !m.res;
     const cls = isFuture ? 'upcoming-row' : (m.out === 'V' ? 'win' : m.out === 'H' ? 'loss' : 'draw');
     const result = isFuture
       ? `<span class="result-pending">— Tulossa —</span>`
