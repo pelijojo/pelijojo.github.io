@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LPS P8 Piirisarja · Syksy 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  :root {
+    --ink: #0f0f0f;
+    --ink-2: #1c1c1a;
+    --paper: #f6f4ef;
+    --paper-2: #ffffff;
+    --rule: #e3ddd0;
+    --rule-2: #ece6d8;
+    --muted: #7a7468;
+    --muted-2: #a8a294;
+    --green: #00843D;
+    --green-deep: #00582a;
+    --green-bright: #1aa658;
+    --green-tint: rgba(0, 132, 61, 0.06);
+    --green-tint-2: rgba(0, 132, 61, 0.12);
+    --win: #e8f3ec;
+    --win-bar: #00843D;
+    --loss: #f6e7e7;
+    --loss-bar: #b03a3a;
+    --draw: #f5efde;
+    --draw-bar: #b3892b;
+    --shadow: 0 1px 0 rgba(15,15,15,.04), 0 16px 40px -24px rgba(15,15,15,.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--paper); }
+  body {
+    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .num  { font-variant-numeric: tabular-nums; }
+
+  /* ──────────────────────────── HEADER ──────────────────────────── */
+  header.masthead {
+    background: var(--ink);
+    color: #fff;
+    position: relative;
+  }
+  .masthead::before {
+    content: ''; position: absolute; left: 0; right: 0; top: 0;
+    height: 4px; background: var(--green);
+  }
+  .masthead-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; align-items: center; gap: 22px;
+    padding: 22px 32px 20px;
+  }
+  .masthead-logo {
+    position: relative;
+    height: 56px; width: 56px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .masthead-logo-img {
+    max-height: 56px;
+    max-width: 56px;
+    height: auto; width: auto;
+    display: block;
+  }
+  /* fallback shown when image fails */
+  .masthead-logo[data-fallback="1"] {
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset;
+  }
+  .masthead-logo[data-fallback="1"] .masthead-logo-img { display: none; }
+  .masthead-logo-text {
+    display: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .masthead-logo[data-fallback="1"] .masthead-logo-text { display: block; }
+  .masthead-title {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .masthead-eyebrow {
+    font-size: 10.5px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--green-bright); font-weight: 600;
+  }
+  .masthead-name {
+    font-size: 17px; font-weight: 600; letter-spacing: -0.005em;
+  }
+  .masthead-meta {
+    margin-left: auto;
+    display: flex; gap: 28px; align-items: center;
+  }
+  .meta-cell {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+  }
+  .meta-cell-label {
+    font-size: 9.5px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: #8a8a85; font-weight: 600;
+  }
+  .meta-cell-value {
+    font-size: 13px; font-weight: 500; color: #fff;
+  }
+  .live-dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: var(--green-bright); margin-right: 7px;
+    box-shadow: 0 0 0 0 rgba(26,166,88,.7); animation: pulse 2s infinite;
+    vertical-align: 1px;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(26,166,88,.7); }
+    70%{ box-shadow: 0 0 0 8px rgba(26,166,88,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(26,166,88,0); }
+  }
+
+  /* ──────────────────────────── HERO BANNER ──────────────────────────── */
+  .hero {
+    background: var(--ink);
+    color: #fff;
+    border-bottom: 1px solid #2a2a28;
+    padding: 14px 0 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    /* faint editorial green sweep */
+    content: ''; position: absolute; right: -10%; top: -50%;
+    width: 60%; height: 200%;
+    background: radial-gradient(ellipse at center, rgba(0,132,61,0.16), transparent 60%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: 1280px; margin: 0 auto;
+    padding: 32px 32px 0;
+    position: relative; z-index: 1;
+  }
+  .hero-kicker {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--green-bright); font-weight: 600;
+    margin-bottom: 18px;
+  }
+  .hero-kicker .bar {
+    width: 38px; height: 2px; background: var(--green-bright);
+  }
+  .hero-title {
+    font-size: clamp(48px, 9vw, 124px);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .hero-title .accent { color: var(--green-bright); }
+  .hero-sub {
+    font-size: 15px; color: #b9b6ad;
+    max-width: 580px; margin-top: 18px; line-height: 1.55;
+  }
+
+  /* ──────────────────────────── CONTAINER ──────────────────────────── */
+  .container {
+    max-width: 1280px; margin: 0 auto;
+    padding: 0 32px 80px;
+  }
+
+  /* ──────────────────────────── NEXT MATCH SPOTLIGHT ──────────────────────────── */
+  .spotlight {
+    margin-top: -38px;
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .spotlight::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; background: var(--green);
+  }
+  .spotlight-inner {
+    padding: 28px 36px 28px 44px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 36px;
+    align-items: center;
+  }
+  .spotlight-label {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .spotlight-eyebrow {
+    font-size: 10.5px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--green); font-weight: 600;
+  }
+  .spotlight-when {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .spotlight-when small {
+    display: block; font-size: 13px; font-weight: 500; color: var(--muted);
+    letter-spacing: 0; margin-top: 8px;
+  }
+  .spotlight-vs {
+    display: flex; align-items: center; gap: 22px;
+    border-left: 1px solid var(--rule);
+    padding-left: 36px;
+  }
+  .spotlight-team {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .spotlight-team-tag {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+  .spotlight-team-name {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .spotlight-team.lps .spotlight-team-name { color: var(--green-deep); }
+  .spotlight-vs-mark {
+    font-size: 13px; letter-spacing: 0.2em; color: var(--muted);
+    font-weight: 600;
+  }
+  .spotlight-meta {
+    display: flex; flex-direction: column; gap: 6px;
+    text-align: right; border-left: 1px solid var(--rule); padding-left: 36px;
+  }
+  .spotlight-meta-row { display: flex; gap: 12px; justify-content: flex-end; align-items: baseline; }
+  .spotlight-meta-label {
+    font-size: 9.5px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+  .spotlight-meta-value {
+    font-size: 14px; font-weight: 500;
+  }
+
+  /* compact variant */
+  .spotlight.compact .spotlight-when { font-size: 22px; }
+  .spotlight.compact .spotlight-team-name { font-size: 17px; }
+  .spotlight.compact .spotlight-inner { padding: 18px 24px 18px 32px; gap: 24px; }
+
+  /* ──────────────────────────── TEAM TILES ──────────────────────────── */
+  .section-head {
+    display: flex; align-items: baseline; gap: 18px;
+    margin: 28px 0 18px;
+  }
+  .section-rule {
+    flex: 1; height: 1px; background: var(--rule);
+  }
+  .section-head h2 {
+    font-size: 13px; letter-spacing: 0.26em; text-transform: uppercase;
+    font-weight: 600; color: var(--ink);
+  }
+  .section-head .small {
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+  }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .tile {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 24px 22px 22px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s, border-color .2s;
+  }
+  .tile:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+    border-color: var(--green-tint-2);
+  }
+  .tile:hover .tile-cta { color: var(--green); transform: translateX(2px); }
+  .tile:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+  .tile-cta {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--rule-2);
+    font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+    transition: color .15s, transform .15s;
+  }
+  .tile-level {
+    font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 14px;
+  }
+  .tile-level::before {
+    content: ''; width: 14px; height: 2px; background: var(--green);
+  }
+  .tile-team {
+    font-size: 19px; font-weight: 700; letter-spacing: -0.01em;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+  .tile-pos {
+    display: flex; align-items: baseline; gap: 8px;
+    margin-bottom: 18px;
+  }
+  .tile-pos-num {
+    font-size: 64px; font-weight: 700; letter-spacing: -0.05em;
+    line-height: 0.85; color: var(--green-deep);
+  }
+  .tile-pos-of {
+    font-size: 14px; color: var(--muted); font-weight: 500;
+  }
+  .tile-pos-label {
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+    align-self: flex-end;
+    margin-bottom: 4px;
+  }
+  .tile-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    border-top: 1px solid var(--rule);
+    padding-top: 14px;
+  }
+  .tile-stat-label {
+    font-size: 9.5px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .tile-stat-value {
+    font-size: 18px; font-weight: 600; letter-spacing: -0.01em;
+  }
+  .tile-stat-value.pts { color: var(--green); }
+  .tile-form {
+    display: flex; gap: 4px;
+    margin-top: 14px;
+  }
+  .form-dot {
+    width: 18px; height: 18px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff;
+  }
+  .form-dot.v { background: var(--win-bar); }
+  .form-dot.h { background: var(--loss-bar); }
+  .form-dot.t { background: var(--draw-bar); }
+  .form-dot.empty { background: var(--rule-2); }
+
+  /* ──────────────────────────── TABS ──────────────────────────── */
+  .tabs {
+    display: flex; gap: 2px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 24px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab {
+    padding: 14px 18px 12px;
+    cursor: pointer;
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    font-weight: 600;
+    color: var(--muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color .15s;
+    font-family: inherit;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { color: var(--ink); border-bottom-color: var(--green); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadein .25s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* ──────────────────────────── PANELS ──────────────────────────── */
+  .panel {
+    background: var(--paper-2);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 22px;
+  }
+  .panel-head {
+    padding: 18px 24px 14px;
+    display: flex; align-items: baseline; gap: 14px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .panel-head h3 {
+    font-size: 13px; letter-spacing: 0.22em; text-transform: uppercase;
+    font-weight: 600;
+  }
+  .panel-head .sub {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500; margin-left: auto;
+  }
+  .panel-head .accent-mark {
+    width: 18px; height: 2px; background: var(--green); margin-right: 4px;
+  }
+
+  /* ──────────────────────────── TABLES ──────────────────────────── */
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    text-align: left;
+    font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper-2);
+  }
+  thead th.c { text-align: center; }
+  thead th.r { text-align: right; }
+  tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--rule-2);
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  tbody td.c { text-align: center; }
+  tbody td.r { text-align: right; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover:not(.lps-row) { background: rgba(15,15,15,0.018); }
+
+  .pos-cell {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 14px; color: var(--muted);
+    width: 32px;
+  }
+  .lps-row .pos-cell { color: var(--green-deep); }
+
+  .team-cell { font-weight: 500; letter-spacing: -0.005em; }
+  .lps-row .team-cell { font-weight: 700; color: var(--green-deep); }
+  .lps-row .team-cell::before {
+    content: ''; display: inline-block;
+    width: 4px; height: 14px; background: var(--green); border-radius: 1px;
+    margin-right: 10px; vertical-align: -2px;
+  }
+  .lps-row { background: var(--green-tint) !important; }
+  .lps-row:hover { background: var(--green-tint-2) !important; }
+
+  .pts-cell { font-weight: 700; font-size: 16px; }
+  .lps-row .pts-cell { color: var(--green-deep); }
+
+  /* result rows — subtle */
+  tr.win  { box-shadow: inset 3px 0 0 var(--win-bar); }
+  tr.loss { box-shadow: inset 3px 0 0 var(--loss-bar); }
+  tr.draw { box-shadow: inset 3px 0 0 var(--draw-bar); }
+  tr.upcoming-row td:first-child { padding-left: 19px; }
+
+  .result-chip {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700; font-size: 15px;
+  }
+  .result-out {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border-radius: 3px;
+    font-size: 10px; font-weight: 700;
+    color: #fff;
+    text-align: center; line-height: 18px;
+    letter-spacing: 0;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .result-out.v { background: var(--win-bar); }
+  .result-out.h { background: var(--loss-bar); }
+  .result-out.t { background: var(--draw-bar); }
+  .result-pending {
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+
+  .date-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 500; color: var(--ink);
+  }
+  .date-cell .wkd {
+    color: var(--muted); margin-right: 4px;
+    text-transform: lowercase; font-weight: 500;
+  }
+  .time-cell {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--muted);
+  }
+
+  .venue-cell {
+    font-size: 12px; color: var(--muted); font-weight: 400;
+  }
+
+  .opp-cell { font-weight: 500; }
+  .opp-pos {
+    display: inline-block; margin-left: 8px;
+    font-size: 10.5px; color: var(--muted-2); font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .team-tag {
+    display: inline-block;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--green-deep); font-weight: 700;
+    background: var(--green-tint);
+    padding: 3px 8px; border-radius: 2px;
+    border: 1px solid var(--green-tint-2);
+    margin-right: 8px;
+  }
+  .level-tag {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+
+  /* ──────────────────────────── LOADER / ERROR ──────────────────────────── */
+  .loader, .error-box {
+    padding: 80px 32px; text-align: center;
+    color: var(--muted); font-size: 14px;
+  }
+  .loader .spinner {
+    display: inline-block; width: 28px; height: 28px;
+    border: 2px solid var(--rule); border-top-color: var(--green);
+    border-radius: 50%; animation: spin 0.9s linear infinite;
+    margin-bottom: 18px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error-box {
+    color: var(--loss-bar);
+    background: var(--loss);
+    border: 1px solid #eecccc;
+    border-radius: 4px;
+  }
+
+  /* ──────────────────────────── FOOTER ──────────────────────────── */
+  footer.colophon {
+    border-top: 1px solid var(--rule);
+    padding: 36px 32px;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+  .colophon-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
+  }
+  .colophon a { color: var(--green-deep); text-decoration: none; border-bottom: 1px solid var(--green-tint-2); }
+  .colophon a:hover { border-bottom-color: var(--green); }
+  .colophon-sep { color: var(--rule); }
+
+  /* ──────────────────────────── TEAM GRID (Yhteenveto) ──────────────────────────── */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .team-grid .panel { margin-bottom: 0; }
+  .team-grid .panel-head h3 .small-tag {
+    font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--green); font-weight: 600; margin-left: 8px;
+  }
+
+  /* ──────────────────────────── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 1100px) {
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px) {
+    .team-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    .masthead-inner { padding: 14px 16px; gap: 12px; flex-wrap: wrap; }
+    .masthead-logo { height: 44px; width: 44px; }
+    .masthead-logo-img { max-height: 44px; max-width: 44px; }
+    .masthead-logo-text { font-size: 15px; }
+    .masthead-meta { display: flex; gap: 16px; width: 100%; margin-left: 0; margin-top: 8px;
+                     border-top: 1px solid #2a2a28; padding-top: 10px; }
+    .meta-cell { align-items: flex-start; }
+    .masthead-name { font-size: 15px; }
+    .hero-inner, .container { padding-left: 16px; padding-right: 16px; }
+    .hero { padding: 12px 0 36px; }
+    .hero-inner { padding-top: 24px; }
+    .hero-kicker { font-size: 9.5px; letter-spacing: 0.24em; margin-bottom: 14px; }
+    .hero-title { font-size: clamp(54px, 18vw, 88px); }
+    .hero-sub { font-size: 13.5px; margin-top: 14px; }
+    .tiles { grid-template-columns: 1fr; }
+    .tile { padding: 20px 18px 18px; }
+    .tile-pos-num { font-size: 56px; }
+    .section-head { margin: 22px 0 14px; gap: 12px; }
+    .section-head h2 { font-size: 12px; }
+    .section-head .small { font-size: 10px; }
+    .panel-head { padding: 14px 16px 12px; flex-wrap: wrap; gap: 8px; }
+    .panel-head .sub { margin-left: 0; width: 100%; }
+    footer.colophon { padding: 24px 16px; }
+    .colophon-inner { font-size: 11px; gap: 8px; }
+    .tab { padding: 12px 14px 10px; font-size: 11px; letter-spacing: 0.16em; }
+
+    /* Standings table — compact columns */
+    table.standings-table thead th,
+    table.standings-table tbody td {
+      padding: 10px 5px;
+      font-size: 12.5px;
+    }
+    table.standings-table .pos-cell { width: 22px; font-size: 11.5px; padding-left: 8px; }
+    table.standings-table .pts-cell { font-size: 14px; padding-right: 8px; }
+    table.standings-table .team-cell { font-size: 12.5px; letter-spacing: -0.01em; }
+    .lps-row .team-cell::before { width: 3px; height: 11px; margin-right: 6px; }
+  }
+  @media (max-width: 560px) {
+    /* Hide Maalit (col 7) and ME (col 8) on small screens — keep #, team, P/V/T/H, Pts */
+    table.standings-table th:nth-child(7),
+    table.standings-table td:nth-child(7),
+    table.standings-table th:nth-child(8),
+    table.standings-table td:nth-child(8) {
+      display: none;
+    }
+  }
+
+  /* ─── Match tables convert to cards: always when .cards-layout, or when body in narrow viewport ─── */
+  table.matches-table.cards-layout,
+  body.viewport-cards table.matches-table { display: block; width: 100%; }
+  table.matches-table.cards-layout thead,
+  body.viewport-cards table.matches-table thead { display: none; }
+  table.matches-table.cards-layout tbody,
+  body.viewport-cards table.matches-table tbody { display: block; }
+
+  table.matches-table.cards-layout tr,
+  body.viewport-cards table.matches-table tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "datetime result"
+      "opp result"
+      "venue venue";
+    column-gap: 14px;
+    row-gap: 3px;
+    padding: 14px 14px 14px 17px !important;
+    border-bottom: 1px solid var(--rule-2);
+    border-left: 3px solid transparent;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+  table.matches-table.cards-layout tr.win,
+  body.viewport-cards table.matches-table tr.win  { border-left-color: var(--win-bar); background: rgba(0,132,61,0.025) !important; }
+  table.matches-table.cards-layout tr.loss,
+  body.viewport-cards table.matches-table tr.loss { border-left-color: var(--loss-bar); background: rgba(176,58,58,0.025) !important; }
+  table.matches-table.cards-layout tr.draw,
+  body.viewport-cards table.matches-table tr.draw { border-left-color: var(--draw-bar); background: rgba(179,137,43,0.025) !important; }
+  table.matches-table.cards-layout tr.upcoming-row,
+  body.viewport-cards table.matches-table tr.upcoming-row { border-left-color: var(--rule); padding-left: 17px !important; }
+  table.matches-table.cards-layout tr:last-child,
+  body.viewport-cards table.matches-table tr:last-child { border-bottom: none; }
+
+  table.matches-table.cards-layout td,
+  body.viewport-cards table.matches-table td {
+    padding: 0 !important;
+    border: none !important;
+    text-align: left !important;
+    background: transparent !important;
+  }
+  table.matches-table.cards-layout td.date-cell,
+  body.viewport-cards table.matches-table td.date-cell {
+    grid-area: datetime;
+    font-size: 12.5px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  table.matches-table.cards-layout td.date-cell::after,
+  body.viewport-cards table.matches-table td.date-cell::after {
+    content: ' · ' attr(data-time);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  table.matches-table.cards-layout td.time-cell,
+  body.viewport-cards table.matches-table td.time-cell { display: none; }
+  table.matches-table.cards-layout td.opp-cell,
+  body.viewport-cards table.matches-table td.opp-cell {
+    grid-area: opp;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  table.matches-table.cards-layout td.opp-cell .opp-pos,
+  body.viewport-cards table.matches-table td.opp-cell .opp-pos { margin-left: 6px; font-size: 11px; }
+  table.matches-table.cards-layout td.venue-cell,
+  body.viewport-cards table.matches-table td.venue-cell {
+    grid-area: venue;
+    font-size: 11.5px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+  table.matches-table.cards-layout td.r,
+  body.viewport-cards table.matches-table td.r {
+    grid-area: result;
+    align-self: center;
+    justify-self: end;
+    text-align: right !important;
+  }
+  table.matches-table.cards-layout .result-pending,
+  body.viewport-cards table.matches-table .result-pending {
+    font-size: 10px; letter-spacing: 0.14em;
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-logo" aria-label="Laajasalon Palloseura">
+      <img class="masthead-logo-img"
+           src="https://laajasalonpalloseura.fi/wp-content/uploads/2021/11/LPS-LOGO-ILMAN-TAUSTAA.png"
+           alt="Laajasalon Palloseura 1978"
+           onerror="this.parentElement.setAttribute('data-fallback', '1')">
+      <span class="masthead-logo-text">LPS</span>
+    </div>
+    <div class="masthead-title">
+      <div class="masthead-eyebrow">Laajasalon Palloseura</div>
+      <div class="masthead-name">P8 · Piirisarja · Syksy 2026</div>
+    </div>
+    <div class="masthead-meta">
+      <div class="meta-cell">
+        <span class="meta-cell-label">Lähde</span>
+        <span class="meta-cell-value"><span class="live-dot"></span>Palloliitto</span>
+      </div>
+      <div class="meta-cell">
+        <span class="meta-cell-label">Päivitetty</span>
+        <span class="meta-cell-value" id="update-ts">—</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker"></div>
+    <h1 class="hero-title">Piiri<span class="accent">sarja</span>.</h1>
+    <p class="hero-sub">LPS:n P8-joukkueiden sarjatilanne reaaliajassa. Sijoitukset ja ottelut kaikille tasoille — päivittyy automaattisesti Palloliiton tulospalvelusta.</p>
+  </div>
+</section>
+
+<div class="container">
+  <div id="app">
+    <div class="loader">
+      <div class="spinner"></div>
+      <div>Haetaan sarjadataa Palloliiton API:sta…</div>
+    </div>
+  </div>
+</div>
+
+<footer class="colophon">
+  <div class="colophon-inner">
+    <strong>LPS Piirisarja</strong>
+    <span class="colophon-sep">/</span>
+    Data: <a href="https://tulospalvelu.palloliitto.fi" target="_blank" rel="noopener">Palloliitto Tulospalvelu</a>
+    <span class="colophon-sep">/</span>
+    <a href="https://laajasalonpalloseura.fi" target="_blank" rel="noopener">laajasalonpalloseura.fi</a>
+    <span class="colophon-sep">/</span>
+    <span>Syksy 2026 · P8</span>
+  </div>
+</footer>
+
+<!-- ─────────────────────── TWEAKS PANEL ─────────────────────── -->
+<div id="tweaks-root"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   TWEAKS
+   ════════════════════════════════════════════════════════════════════ */
+const TWEAKS = /*EDITMODE-BEGIN*/{
+  "subtleRows": true
+}/*EDITMODE-END*/;
+
+let tweakState = { ...TWEAKS };
+
+/* ════════════════════════════════════════════════════════════════════
+   API
+   ════════════════════════════════════════════════════════════════════ */
+const BASE   = 'https://palloliitto.torneopal.fi/taso/rest';
+const ACCEPT = 'json/df8e84j9xtdz269euy3h';
+const PARAM  = 'ysnyp4h6e9egetkc3s3v';
+const COMP   = 'etejp26';
+
+const LPS_BY_GROUP = {
+  '8':  { id:'35156867', name:'LPS',           level:1 },
+  '9':  { id:'35167112', name:'LPS/Musta',     level:2 },
+  '14': { id:'35167113', name:'LPS/Vihreä',    level:3 },
+  '15': { id:'35213159', name:'LPS/Valkoinen', level:5 },
+};
+
+async function api(ep, params) {
+  const r = await fetch(`${BASE}/${ep}?${new URLSearchParams(params)}&${PARAM}`,
+                        { headers:{ Accept:ACCEPT } });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   STANDINGS CALC
+   ════════════════════════════════════════════════════════════════════ */
+function calcStandings(matches) {
+  const t = {};
+  for (const m of matches) {
+    if (m.competition_id !== COMP) continue;
+    const gA = +m.fs_A, gB = +m.fs_B;
+    if (isNaN(gA) || isNaN(gB) || m.fs_A === '' || m.fs_B === '') continue;
+    const add = (id, name) => { if (!t[id]) t[id] = {id, name, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0}; };
+    add(m.team_A_id, m.team_A_name); add(m.team_B_id, m.team_B_name);
+    t[m.team_A_id].p++; t[m.team_A_id].gf += gA; t[m.team_A_id].ga += gB;
+    t[m.team_B_id].p++; t[m.team_B_id].gf += gB; t[m.team_B_id].ga += gA;
+    if      (gA > gB) { t[m.team_A_id].w++; t[m.team_A_id].pts += 3; t[m.team_B_id].l++; }
+    else if (gB > gA) { t[m.team_B_id].w++; t[m.team_B_id].pts += 3; t[m.team_A_id].l++; }
+    else              { t[m.team_A_id].d++; t[m.team_A_id].pts++; t[m.team_B_id].d++; t[m.team_B_id].pts++; }
+  }
+  return Object.values(t)
+    .sort((a,b) => b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga) || b.gf - a.gf)
+    .map((x,i) => ({ ...x, pos: i+1, gd: x.gf - x.ga }));
+}
+
+function lpsMatches(matches, id) {
+  return matches
+    .filter(m => m.competition_id === COMP && (m.team_A_id === id || m.team_B_id === id))
+    .map(m => {
+      const home = m.team_A_id === id;
+      let res = null, out = null;
+      if (m.fs_A !== '' && m.fs_B !== '') {
+        const gL = home ? +m.fs_A : +m.fs_B;
+        const gO = home ? +m.fs_B : +m.fs_A;
+        res = `${gL}–${gO}`;
+        out = gL > gO ? 'V' : gL < gO ? 'H' : 'T';
+      }
+      return {
+        date: m.date,
+        time: (m.time || '').slice(0, 5),
+        home,
+        opp: home ? m.team_B_name : m.team_A_name,
+        oppId: home ? m.team_B_id : m.team_A_id,
+        res, out,
+        status: m.status,
+        venue: m.venue_name || '',
+      };
+    })
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   FORMATTERS
+   ════════════════════════════════════════════════════════════════════ */
+const WKD_FI = ['su','ma','ti','ke','to','pe','la'];
+function fmtDate(s) {
+  if (!s) return '';
+  const [y, mo, d] = s.split('-');
+  return `${parseInt(d,10)}.${parseInt(mo,10)}.`;
+}
+function fmtDateLong(s) {
+  if (!s) return '';
+  const dt = new Date(s + 'T00:00:00');
+  const [y, mo, d] = s.split('-');
+  return `<span class="wkd">${WKD_FI[dt.getDay()]}</span>${parseInt(d,10)}.${parseInt(mo,10)}.`;
+}
+function fmtRelativeDate(s, time) {
+  if (!s) return '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(s + 'T00:00:00');
+  const days = Math.round((target - today) / 86400000);
+  const dt = new Date(s + 'T00:00:00');
+  const wkd = ['Sunnuntai','Maanantai','Tiistai','Keskiviikko','Torstai','Perjantai','Lauantai'][dt.getDay()];
+  const [y, mo, d] = s.split('-');
+  const datePart = `${parseInt(d,10)}.${parseInt(mo,10)}.`;
+  if (days === 0) return `Tänään · klo ${time}`;
+  if (days === 1) return `Huomenna · klo ${time}`;
+  if (days > 0 && days < 7) return `${wkd} · klo ${time}`;
+  return `${wkd} ${datePart} · klo ${time}`;
+}
+
+function resultBadge(out) {
+  if (!out) return '';
+  return `<span class="result-out ${out.toLowerCase()}">${out}</span>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   RENDER: STANDINGS TABLE
+   ════════════════════════════════════════════════════════════════════ */
+function renderStandings(standings, lpsId) {
+  const rows = standings.map(t => {
+    const isLps = t.id === lpsId;
+    return `<tr class="${isLps ? 'lps-row' : ''}">
+      <td class="pos-cell">${String(t.pos).padStart(2, '0')}</td>
+      <td class="team-cell">${t.name}</td>
+      <td class="c num">${t.p}</td>
+      <td class="c num">${t.w}</td>
+      <td class="c num">${t.d}</td>
+      <td class="c num">${t.l}</td>
+      <td class="c num">${t.gf}–${t.ga}</td>
+      <td class="c num">${t.gd > 0 ? '+' + t.gd : t.gd}</td>
+      <td class="r pts-cell num">${t.pts}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="standings-table">
+    <thead><tr>
+      <th>#</th><th>Joukkue</th>
+      <th class="c">P</th><th class="c">V</th><th class="c">T</th><th class="c">H</th>
+      <th class="c">Maalit</th><th class="c">ME</th><th class="r">Pts</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   RENDER: TEAM TILES
+   ════════════════════════════════════════════════════════════════════ */
+function renderFormDots(matches) {
+  const last5 = matches.filter(m => m.out).slice(-5);
+  const dots = [];
+  for (let i = 0; i < 5; i++) {
+    if (i < last5.length) {
+      const o = last5[i].out.toLowerCase();
+      dots.push(`<span class="form-dot ${o}" title="${last5[i].opp}">${last5[i].out}</span>`);
+    } else {
+      dots.push(`<span class="form-dot empty"></span>`);
+    }
+  }
+  return `<div class="tile-form">${dots.join('')}</div>`;
+}
+
+function renderTile(info, group, matches, tabIndex) {
+  const t = group.standings.find(x => x.id === info.id);
+  const dataAttr = `data-tile-tab="${tabIndex}"`;
+  if (!t) return `<div class="tile" ${dataAttr} role="button" tabindex="0">
+    <div class="tile-level">Taso ${info.level}</div>
+    <div class="tile-team">${info.name}</div>
+    <div style="color:var(--muted);font-size:13px">Ei vielä otteludataa</div>
+  </div>`;
+  return `<div class="tile" ${dataAttr} role="button" tabindex="0" aria-label="Avaa ${info.name} otteluohjelma">
+    <div class="tile-level">Taso ${info.level} · ${group.groupName || ''}</div>
+    <div class="tile-team">${info.name}</div>
+    <div class="tile-pos">
+      <span class="tile-pos-num">${t.pos}</span>
+      <span class="tile-pos-of">/${group.standings.length}</span>
+      <span class="tile-pos-label" style="margin-left:auto">Sija</span>
+    </div>
+    ${tweakState.showForm ? '' /* removed: form dots */ : ''}
+    <div class="tile-stats">
+      <div>
+        <div class="tile-stat-label">V–T–H</div>
+        <div class="tile-stat-value num">${t.w}–${t.d}–${t.l}</div>
+      </div>
+      <div>
+        <div class="tile-stat-label">Maalit</div>
+        <div class="tile-stat-value num">${t.gf}–${t.ga}</div>
+      </div>
+      <div>
+        <div class="tile-stat-label">ME</div>
+        <div class="tile-stat-value num">${t.gd > 0 ? '+' + t.gd : t.gd}</div>
+      </div>
+      <div>
+        <div class="tile-stat-label">Pts</div>
+        <div class="tile-stat-value pts num">${t.pts}</div>
+      </div>
+    </div>
+    <div class="tile-cta">Näytä otteluohjelma →</div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   RENDER: SPOTLIGHT (next match across all teams)
+   ════════════════════════════════════════════════════════════════════ */
+function renderSpotlight(nextMatch) {
+  if (!nextMatch) return '';
+  const compact = tweakState.spotlightSize === 'compact';
+  const when = fmtRelativeDate(nextMatch.date, nextMatch.time);
+  const venue = nextMatch.venue || '—';
+  return `<div class="spotlight ${compact ? 'compact' : ''}">
+    <div class="spotlight-inner">
+      <div class="spotlight-label">
+        <span class="spotlight-eyebrow">Seuraava ottelu</span>
+        <span class="spotlight-when">${when}<small>Taso ${nextMatch.level}</small></span>
+      </div>
+      <div class="spotlight-vs">
+        <div class="spotlight-team lps">
+          <span class="spotlight-team-tag">LPS</span>
+          <span class="spotlight-team-name">${nextMatch.team}</span>
+        </div>
+        <span class="spotlight-vs-mark">VS</span>
+        <div class="spotlight-team">
+          <span class="spotlight-team-tag">Vastustaja</span>
+          <span class="spotlight-team-name">${nextMatch.opp}</span>
+        </div>
+      </div>
+      <div class="spotlight-meta">
+        <div class="spotlight-meta-row">
+          <span class="spotlight-meta-label">Paikka</span>
+          <span class="spotlight-meta-value">${venue}</span>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   RENDER: UPCOMING / RESULTS TABLES
+   ════════════════════════════════════════════════════════════════════ */
+function renderUpcomingTable(rows) {
+  if (!rows.length) {
+    return `<div style="padding:32px;color:var(--muted);text-align:center;font-size:13px">Ei tulevia otteluita.</div>`;
+  }
+  const trs = rows.map(m => {
+    const op = m.oppPos && m.oppPos[m.oppId];
+    return `<tr class="upcoming-row">
+      <td><span class="team-tag">${m.team}</span></td>
+      <td class="date-cell">${fmtDateLong(m.date)}</td>
+      <td class="time-cell">${m.time}</td>
+      <td class="opp-cell">${m.opp}${op ? `<span class="opp-pos">#${op}</span>` : ''}</td>
+      <td class="venue-cell">${m.venue || '—'}</td>
+    </tr>`;
+  }).join('');
+  return `<table>
+    <thead><tr>
+      <th>Joukkue</th><th>Pvm</th><th>Klo</th><th>Vastustaja</th><th>Paikka</th>
+    </tr></thead>
+    <tbody>${trs}</tbody>
+  </table>`;
+}
+
+function renderMatchTable(rows, includeTeamCol = false, cards = false) {
+  if (!rows.length) {
+    return `<div style="padding:24px 16px;color:var(--muted);text-align:center;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:600">Ei otteluita</div>`;
+  }
+  const trs = rows.map(m => {
+    const isFuture = !m.res;
+    const cls = isFuture ? 'upcoming-row' : (m.out === 'V' ? 'win' : m.out === 'H' ? 'loss' : 'draw');
+    const result = isFuture
+      ? `<span class="result-pending">— Tulossa —</span>`
+      : `<span class="result-chip">${m.res} ${resultBadge(m.out)}</span>`;
+    return `<tr class="${cls}">
+      ${includeTeamCol ? `<td><span class="team-tag">${m.team}</span><span class="level-tag">T${m.level}</span></td>` : ''}
+      <td class="date-cell" data-time="${m.time}">${fmtDateLong(m.date)}</td>
+      <td class="time-cell">${m.time}</td>
+      <td class="opp-cell">${m.opp}${m.oppPos ? `<span class="opp-pos">#${m.oppPos}</span>` : ''}</td>
+      <td class="r">${result}</td>
+      <td class="venue-cell">${m.venue || '—'}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="matches-table${cards ? ' cards-layout' : ''}">
+    <thead><tr>
+      ${includeTeamCol ? '<th>Joukkue</th>' : ''}
+      <th>Pvm</th><th>Klo</th><th>Vastustaja</th><th class="r">Tulos</th><th>Paikka</th>
+    </tr></thead>
+    <tbody>${trs}</tbody>
+  </table>`;
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   MAIN
+   ════════════════════════════════════════════════════════════════════ */
+let CACHE = null;
+
+async function main() {
+  try {
+    const today = new Date().toISOString().slice(0,10);
+    const groups = {};
+
+    await Promise.all(Object.entries(LPS_BY_GROUP).map(async ([gid, info]) => {
+      const d = await api('getGroup', { competition_id: COMP, category_id: 'P8', group_id: gid, matches: 1 });
+      const matches = d.group.matches || [];
+      const standings = calcStandings(matches);
+      const lpsM = lpsMatches(matches, info.id);
+      groups[gid] = {
+        info, standings, matches, lpsMatches: lpsM,
+        oppPos: Object.fromEntries(standings.map(t => [t.id, t.pos])),
+        groupName: d.group.group_name,
+      };
+    }));
+
+    // collect upcoming across all teams
+    const allUpcoming = [];
+    for (const [gid, info] of Object.entries(LPS_BY_GROUP)) {
+      const g = groups[gid];
+      g.lpsMatches
+        .filter(m => m.status !== 'Played' && m.date >= today)
+        .forEach(m => allUpcoming.push({ ...m, team: info.name, level: info.level, oppPos: g.oppPos }));
+    }
+    allUpcoming.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+
+    // collect played
+    const allPlayed = [];
+    for (const [gid, info] of Object.entries(LPS_BY_GROUP)) {
+      groups[gid].lpsMatches
+        .filter(m => m.status === 'Played')
+        .forEach(m => allPlayed.push({ ...m, team: info.name, level: info.level }));
+    }
+    allPlayed.sort((a, b) => b.date.localeCompare(a.date));
+
+    CACHE = { groups, allUpcoming, allPlayed };
+
+    const now = new Date().toLocaleTimeString('fi-FI', { hour: '2-digit', minute: '2-digit' });
+    const todayStr = new Date().toLocaleDateString('fi-FI', { day: 'numeric', month: 'numeric' });
+    document.getElementById('update-ts').textContent = `${todayStr} klo ${now}`;
+
+    render();
+  } catch (e) {
+    document.getElementById('app').innerHTML =
+      `<div class="error-box"><strong>Datan haku epäonnistui</strong><br><span style="font-size:12px;letter-spacing:.16em;text-transform:uppercase">${e.message}</span><br><br><small>Päivitä sivu yrittääksesi uudelleen.</small></div>`;
+  }
+}
+
+function render() {
+  if (!CACHE) return;
+  const { groups, allUpcoming, allPlayed } = CACHE;
+
+  // Augment every lpsMatch with the opponent's standings position
+  for (const [gid, g] of Object.entries(groups)) {
+    g.lpsMatches.forEach(m => { m.oppPos = g.oppPos[m.oppId]; });
+  }
+
+  // Tiles (sorted by level) — only LPS teams, clickable, jump to that team's tab
+  const allLevelsSorted = Object.entries(LPS_BY_GROUP).sort(([,a], [,b]) => a.level - b.level);
+  const tiles = allLevelsSorted
+    .filter(([, info]) => info.id !== null)
+    .map(([gid, info]) => {
+      const tabIdx = allLevelsSorted.findIndex(([g]) => g === gid) + 1;
+      return renderTile(info, groups[gid], groups[gid].lpsMatches, tabIdx);
+    })
+    .join('');
+
+  // Per-level tab content
+  const levelTabs = allLevelsSorted
+    .map(([gid, info], i) => {
+      const g = groups[gid];
+      return `<div class="tab-content" id="tab-${i+1}">
+          <div class="panel">
+            <div class="panel-head">
+              <span class="accent-mark"></span>
+              <h3>Sarjataulukko · ${g.groupName}</h3>
+              <span class="sub">${g.standings.length} joukkuetta · LPS:llä ei joukkuetta tällä tasolla</span>
+            </div>
+            ${renderStandings(g.standings, null)}
+          </div>
+        </div>`;
+      }
+      return `<div class="tab-content" id="tab-${i+1}">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="accent-mark"></span>
+            <h3>${info.name} · Sarjataulukko</h3>
+            <span class="sub">${g.groupName || ''} · ${g.standings.length} joukkuetta</span>
+          </div>
+          ${renderStandings(g.standings, info.id)}
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <span class="accent-mark"></span>
+            <h3>${info.name} · Otteluohjelma</h3>
+            <span class="sub">${g.lpsMatches.length} ottelua</span>
+          </div>
+          ${renderMatchTable(g.lpsMatches)}
+        </div>
+      </div>`;
+    }).join('');
+
+  // Tabs
+  const tabLabels = ['Yhteenveto', 'Taso 1', 'Taso 2', 'Taso 3', 'Taso 5'];
+  const tabHtml = tabLabels.map((l, i) =>
+    `<button class="tab${i === 0 ? ' active' : ''}" data-tab="${i}">${l}</button>`).join('');
+
+  // Per-team sections for Yhteenveto — only LPS teams
+  const teamEntries = allLevelsSorted.filter(([, info]) => info.id !== null);
+  const today = new Date().toISOString().slice(0,10);
+
+  // Map level -> tab index (1..4 because Yhteenveto is 0)
+  const levelToTabIdx = {};
+  teamEntries.forEach(([, info], i) => { levelToTabIdx[info.level] = i + 1; });
+
+  const fmtRoundLabel = (s) => {
+    if (!s) return '—';
+    const dt = new Date(s + 'T00:00:00');
+    const wkd = ['Sunnuntai','Maanantai','Tiistai','Keskiviikko','Torstai','Perjantai','Lauantai'][dt.getDay()];
+    const [y, mo, d] = s.split('-');
+    return `${wkd} ${parseInt(d,10)}.${parseInt(mo,10)}.`;
+  };
+
+  const upcomingByTeam = teamEntries.map(([gid, info]) => {
+    const g = groups[gid];
+    const futureMatches = g.lpsMatches.filter(m => m.status !== 'Played' && m.date >= today);
+    const nextDate = futureMatches.length ? futureMatches[0].date : null;
+    const round = nextDate ? futureMatches.filter(m => m.date === nextDate) : [];
+    const label = nextDate ? fmtRoundLabel(nextDate) : 'Ei tulevia otteluita';
+    return `<div class="panel">
+      <div class="panel-head">
+        <span class="accent-mark"></span>
+        <h3>${info.name}</h3>
+        <span class="sub">${label}${round.length ? ` · ${round.length} ottelua` : ''}</span>
+      </div>
+      ${renderMatchTable(round, false, true)}
+    </div>`;
+  }).join('');
+
+  const resultsByTeam = '';
+
+  // App HTML
+  document.getElementById('app').innerHTML = `
+    <div class="section-head" style="margin-top:8px">
+      <h2>Joukkueet</h2>
+      <span class="small">Sijoitukset · Syksy 2026</span>
+      <span class="section-rule"></span>
+    </div>
+    <div class="tiles">${tiles}</div>
+
+    <div class="section-head">
+      <h2>Sarjat</h2>
+      <span class="small">Taulukot & ottelut</span>
+      <span class="section-rule"></span>
+    </div>
+
+    <div class="tabs" role="tablist">${tabHtml}</div>
+
+    <div class="tab-content active" id="tab-0">
+      <div class="section-head">
+        <h2>Seuraava kierros</h2>
+        <span class="small">Joukkueittain · samana päivänä pelattavat</span>
+        <span class="section-rule"></span>
+      </div>
+      <div class="team-grid">${upcomingByTeam}</div>
+    </div>
+
+    ${levelTabs}
+  `;
+
+  // Tab wiring
+  function switchTab(i) {
+    document.querySelectorAll('.tab').forEach((t, j) => t.classList.toggle('active', i === j));
+    document.querySelectorAll('.tab-content').forEach((t, j) => t.classList.toggle('active', i === j));
+  }
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => switchTab(+btn.dataset.tab));
+  });
+
+  // Tile click — jump to that team's tab + smooth-scroll to tabs
+  document.querySelectorAll('.tile[data-tile-tab]').forEach(tile => {
+    const go = () => {
+      const i = +tile.dataset.tileTab;
+      switchTab(i);
+      const tabsEl = document.querySelector('.tabs');
+      if (tabsEl) {
+        const y = tabsEl.getBoundingClientRect().top + window.pageYOffset - 16;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    };
+    tile.addEventListener('click', go);
+    tile.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+    });
+  });
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   TWEAKS PANEL (vanilla)
+   ════════════════════════════════════════════════════════════════════ */
+let tweaksOpen = false;
+
+function renderTweaks() {
+  const root = document.getElementById('tweaks-root');
+  if (!tweaksOpen) { root.innerHTML = ''; return; }
+  root.innerHTML = `
+    <div id="tweaks-panel" style="
+      position: fixed; bottom: 24px; right: 24px;
+      width: 280px;
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      box-shadow: 0 24px 48px -16px rgba(0,0,0,.18), 0 2px 8px rgba(0,0,0,.06);
+      z-index: 9999;
+      font-family: 'Space Grotesk', sans-serif;
+      overflow: hidden;
+    ">
+      <div style="background: var(--ink); color:#fff; padding: 12px 16px; display:flex; align-items:center;">
+        <span style="font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 600; color: var(--green-bright); margin-right: 8px;">●</span>
+        <span style="font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600;">Tweaks</span>
+        <button id="tweaks-close" style="margin-left:auto; background:none; border:none; color:#aaa; cursor:pointer; font-size:18px; padding:0; line-height:1;">×</button>
+      </div>
+      <div style="padding: 18px 16px; color: var(--muted); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; text-align: center;">
+        Ei aktiivisia säätöjä
+      </div>
+    </div>
+  `;
+
+  document.getElementById('tweaks-close').onclick = () => {
+    tweaksOpen = false; renderTweaks();
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+}
+
+function setTweak(patch) {
+  tweakState = { ...tweakState, ...patch };
+  window.parent.postMessage({ type: '__edit_mode_set_keys', edits: patch }, '*');
+  render();
+  renderTweaks();
+}
+
+// Tweaks protocol — listener first, announce after
+window.addEventListener('message', (e) => {
+  if (!e.data || typeof e.data !== 'object') return;
+  if (e.data.type === '__activate_edit_mode') {
+    tweaksOpen = true; renderTweaks();
+  } else if (e.data.type === '__deactivate_edit_mode') {
+    tweaksOpen = false; renderTweaks();
+  }
+});
+window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+
+/* ════════════════════════════════════════════════════════════════════
+   RESPONSIVE — toggle body.viewport-cards under 760px so match tables
+   render as cards on phones AND narrow tablets where the standings
+   table is still readable but the 5-col match table would clip.
+   ════════════════════════════════════════════════════════════════════ */
+const CARDS_BREAKPOINT = 760;
+function applyViewportClass() {
+  document.body.classList.toggle('viewport-cards', window.innerWidth <= CARDS_BREAKPOINT);
+}
+window.addEventListener('resize', applyViewportClass);
+applyViewportClass();
+
+/* ─── kick off ─── */
+main();
+</script>
+</body>
+</html>
