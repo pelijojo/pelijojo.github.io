@@ -791,10 +791,13 @@ const PARAM  = 'ysnyp4h6e9egetkc3s3v';
 const COMP   = 'etejp26';
 
 const LPS_BY_GROUP = {
-  '8':  { id:'35156867', name:'LPS',           level:1 },
-  '9':  { id:'35167112', name:'LPS/Musta',     level:2 },
-  '14': { id:'35167113', name:'LPS/Vihreä',    level:3 },
-  '15': { id:'35213159', name:'LPS/Valkoinen', level:5 },
+  '8':  { id:'35156867', name:'LPS',           level:1,   label:'Taso 1'  },
+  '9':  { id:'35167112', name:'LPS/Musta',     level:2,   label:'Taso 2'  },
+  '13': { id:null,       name:null,            level:3.1, label:'Taso 3a' },
+  '14': { id:'35167113', name:'LPS/Vihreä',    level:3.2, label:'Taso 3b' },
+  '11': { id:null,       name:null,            level:4,   label:'Taso 4'  },
+  '12': { id:null,       name:null,            level:5.1, label:'Taso 5a' },
+  '15': { id:'35213159', name:'LPS/Valkoinen', level:5.2, label:'Taso 5b' },
 };
 
 async function api(ep, params) {
@@ -1136,11 +1139,14 @@ function render() {
   const levelTabs = allLevelsSorted
     .map(([gid, info], i) => {
       const g = groups[gid];
-      return `<div class="tab-content" id="tab-${i+1}">
+      const lbl = info.label || `Taso ${info.level}`;
+      if (info.id === null) {
+        // Ei LPS-joukkuetta — vain sarjataulukko
+        return `<div class="tab-content" id="tab-${i+1}">
           <div class="panel">
             <div class="panel-head">
               <span class="accent-mark"></span>
-              <h3>Sarjataulukko · ${g.groupName}</h3>
+              <h3>Sarjataulukko · ${g.groupName || lbl}</h3>
               <span class="sub">${g.standings.length} joukkuetta · LPS:llä ei joukkuetta tällä tasolla</span>
             </div>
             ${renderStandings(g.standings, null)}
@@ -1152,7 +1158,7 @@ function render() {
           <div class="panel-head">
             <span class="accent-mark"></span>
             <h3>${info.name} · Sarjataulukko</h3>
-            <span class="sub">${g.groupName || ''} · ${g.standings.length} joukkuetta</span>
+            <span class="sub">${g.groupName || lbl} · ${g.standings.length} joukkuetta</span>
           </div>
           ${renderStandings(g.standings, info.id)}
         </div>
@@ -1168,7 +1174,7 @@ function render() {
     }).join('');
 
   // Tabs
-  const tabLabels = ['Yhteenveto', 'Taso 1', 'Taso 2', 'Taso 3', 'Taso 5'];
+  const tabLabels = ['Yhteenveto', ...allLevelsSorted.map(([, info]) => info.label || `Taso ${info.level}`)];
   const tabHtml = tabLabels.map((l, i) =>
     `<button class="tab${i === 0 ? ' active' : ''}" data-tab="${i}">${l}</button>`).join('');
 
