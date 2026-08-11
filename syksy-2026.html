@@ -836,12 +836,17 @@ async function api(ep, params) {
    ════════════════════════════════════════════════════════════════════ */
 function calcStandings(matches) {
   const t = {};
+  // Pass 1: rekisteröi kaikki joukkueet sarjasta — myös tulevista otteluista (0 pistettä)
+  for (const m of matches) {
+    if (m.competition_id !== COMP) continue;
+    if (!t[m.team_A_id]) t[m.team_A_id] = { id:m.team_A_id, name:m.team_A_name, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 };
+    if (!t[m.team_B_id]) t[m.team_B_id] = { id:m.team_B_id, name:m.team_B_name, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0 };
+  }
+  // Pass 2: lisää pelattujen otteluiden tulokset
   for (const m of matches) {
     if (m.competition_id !== COMP) continue;
     const gA = +m.fs_A, gB = +m.fs_B;
     if (isNaN(gA) || isNaN(gB) || m.fs_A === '' || m.fs_B === '') continue;
-    const add = (id, name) => { if (!t[id]) t[id] = {id, name, p:0, w:0, d:0, l:0, gf:0, ga:0, pts:0}; };
-    add(m.team_A_id, m.team_A_name); add(m.team_B_id, m.team_B_name);
     t[m.team_A_id].p++; t[m.team_A_id].gf += gA; t[m.team_A_id].ga += gB;
     t[m.team_B_id].p++; t[m.team_B_id].gf += gB; t[m.team_B_id].ga += gA;
     if      (gA > gB) { t[m.team_A_id].w++; t[m.team_A_id].pts += 3; t[m.team_B_id].l++; }
@@ -1113,7 +1118,7 @@ async function main() {
     for (const [gid, info] of Object.entries(LPS_BY_GROUP)) {
       const g = groups[gid];
       g.lpsMatches
-        .filter(m => m.status !== 'Played' && m.date >= today)
+        .filter(m => !m.res && m.date >= today)
         .forEach(m => allUpcoming.push({ ...m, team: info.name, level: info.level, oppPos: g.oppPos }));
     }
     allUpcoming.sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
@@ -1122,7 +1127,7 @@ async function main() {
     const allPlayed = [];
     for (const [gid, info] of Object.entries(LPS_BY_GROUP)) {
       groups[gid].lpsMatches
-        .filter(m => m.status === 'Played')
+        .filter(m => m.res)
         .forEach(m => allPlayed.push({ ...m, team: info.name, level: info.level }));
     }
     allPlayed.sort((a, b) => b.date.localeCompare(a.date));
@@ -1232,7 +1237,7 @@ function render() {
 
   const upcomingByTeam = teamEntries.map(([gid, info]) => {
     const g = groups[gid];
-    const futureMatches = g.lpsMatches.filter(m => m.status !== 'Played' && m.date >= today);
+    const futureMatches = g.lpsMatches.filter(m => !m.res && m.date >= today);
     const nextDate = futureMatches.length ? futureMatches[0].date : null;
     const round = nextDate ? futureMatches.filter(m => m.date === nextDate) : [];
     const label = nextDate ? fmtRoundLabel(nextDate) : 'Ei tulevia otteluita';
