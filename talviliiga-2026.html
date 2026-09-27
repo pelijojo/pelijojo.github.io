@@ -716,7 +716,15 @@ function calcStandings(matches) {
     else if (gB > gA) { t[m.team_B_id].w++; t[m.team_B_id].pts += 3; t[m.team_A_id].l++; }
     else              { t[m.team_A_id].d++; t[m.team_A_id].pts++; t[m.team_B_id].d++; t[m.team_B_id].pts++; }
   }
-  return Object.values(t)
+  const list = Object.values(t);
+  const anyPlayed = list.some(x => x.p > 0);
+  if (!anyPlayed) {
+    // Ei yhtään pelattua ottelua vielä — aakkosjärjestys
+    return list
+      .sort((a,b) => a.name.localeCompare(b.name, 'fi'))
+      .map((x,i) => ({ ...x, pos: i+1, gd: x.gf - x.ga }));
+  }
+  return list
     .sort((a,b) => b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga) || b.gf - a.gf)
     .map((x,i) => ({ ...x, pos: i+1, gd: x.gf - x.ga }));
 }
