@@ -980,11 +980,12 @@ function renderTile(info, group, matches, tabIndex) {
     <div class="tile-team">${info.name}</div>
     <div style="color:var(--muted);font-size:13px">Ei vielä otteludataa</div>
   </div>`;
+  const noGamesYet = group.standings.every(x => x.p === 0);
   return `<div class="tile" ${dataAttr} role="button" tabindex="0" aria-label="Avaa ${info.name} otteluohjelma">
     <div class="tile-level">Taso ${info.level} · ${group.groupName || ''}</div>
     <div class="tile-team">${info.name}</div>
     <div class="tile-pos">
-      <span class="tile-pos-num">${t.pos}</span>
+      <span class="tile-pos-num">${noGamesYet ? '–' : t.pos}</span>
       <span class="tile-pos-of">/${group.standings.length}</span>
       <span class="tile-pos-label" style="margin-left:auto">Sija</span>
     </div>
